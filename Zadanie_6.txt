@@ -1,0 +1,23 @@
+/*
+Napisać funkcję bazodanową, która uruchamiana z parametrem MIASTO porówna rzeczywistą ilość osób mieszkających w mieście, z ilością osób odnotowanych w tabeli MIASTA. 
+W przypadku zgodnych ilości, funkcja zwróci napis : "zgodna ilość mieszkańców: ..." (w miejscu kropeczek odpowiednia liczba). 
+W przypadku niezgodnych ilości funkcja zwróci napis: "niezgodna ilość mieszkańców _ rzeczywista: ... naliczona: ..." (w miejscu kropek odpowiednie liczby). 
+Jeśli miejscowość podana w parametrze wejściowym nie istnieje w którejś z tabeli , to funkcja zakończy działanie błędem z komunikatem : "Brak danych o miejscowościach..." (w miejscu kropek nazwa podana w parametrze).
+/*
+
+CREATE OR REPLACE FUNCTION SPRAWDZ_ILOSC_MIESZKANCOW (x_miasto IN
+VARCHAR2) RETURN VARCHAR2 IS
+	temp_liczba_osob NUMBER;
+	temp_liczba_osob_tab NUMBER;
+BEGIN
+	SELECT COUNT(*) INTO temp_liczba_osob FROM OSOBY WHERE MIASTO = x_miasto;
+	SELECT ILOSC_OSOB INTO temp_liczba_osob_tab FROM MIASTA WHERE NAZWA_MIASTA = x_miasto;
+	IF temp_liczba_osob IS NULL OR temp_liczba_osob_tab IS NULL THEN
+		raise_application_error(-20001, 'Brak danych o miejscowościach ' || x_miasto);
+	ELSIF temp_liczba_osob = temp_liczba_osob_tab THEN
+		RETURN 'zgodna ilość mieszkańców: ' || temp_liczba_osob;
+	ELSE
+		RETURN 'niezgodna ilość mieszkańców - rzeczywista: ' || temp_liczba_osob || ' naliczona: ' || temp_liczba_osob_tab;
+	END IF;
+END;
+/
