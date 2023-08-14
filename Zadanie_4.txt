@@ -1,0 +1,19 @@
+/*
+Utworzyć trigger osoby OSOBY_MIASTA_I_U, związany z tabelą OSOBY, który podczas wstawiania lub modyfikacji danych osobowych sprawdzi 
+czy miasto podane przez użytkownika istnieje w tabeli MIASTA. Jeśli tak, to pozwoli utworzyć lub zmodyfikować rekord.
+Jeśli nie, to również pozwoli utworzyć lub zmodyfikować rekord, jednak wcześniej założy w tabeli MIASTA rekord z brakującą miejscowością, pozostawiając pola ILOSC_OSOB i DATA_NALICZENIA niewypełnione.
+*/
+
+CREATE OR REPLACE TRIGGER OSOBY_MIASTA_I_U
+BEFORE INSERT OR UPDATE ON OSOBY
+FOR EACH ROW
+DECLARE
+ 	licz NUMBER;
+BEGIN
+	SELECT COUNT(*) INTO licz FROM MIASTA WHERE NAZWA_MIASTA = :NEW.MIASTO;
+
+	IF licz = 0 THEN
+		INSERT INTO MIASTA (NAZWA_MIASTA) VALUES (:NEW.MIASTO);
+	END IF;
+END;
+/
