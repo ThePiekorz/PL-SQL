@@ -1,5 +1,6 @@
 /*
-Utworzyć sekwencję OSOBY_SEQ i trigger OSOBY_TRG związany z tabelą OSOBY, który podczas wstawiania do tabeli bez względu na wartość podaną przez użytkownika w polu ID_OSOBY nada własny numer kolejny z sekwencji, ale w taki sposób by nie naruszyć klucza głównego, gdyby wartość już istniała w tabeli.
+Utworzyć sekwencję OSOBY_SEQ i trigger OSOBY_TRG związany z tabelą OSOBY, który podczas wstawiania do tabeli
+bez względu na wartość podaną przez użytkownika w polu ID_OSOBY nada własny numer kolejny z sekwencji, ale w taki sposób by nie naruszyć klucza głównego, gdyby wartość już istniała w tabeli.
 */
 
 CREATE SEQUENCE OSOBY_SEQ
