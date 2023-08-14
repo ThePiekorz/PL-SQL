@@ -1,0 +1,20 @@
+*/
+Utworzyć bezparametrową procedure o nazwie PROC_ZLICZAJ, która ( z zastosowaniem kursora) dla każdego rekordu w tabeli MIASTA obliczy ilość osób z tabeli OSOBY mieszkających w mieście. 
+Jesli ilosc bedzie inna, niz poprzednio odnotowana w polu ILOSC_OSOB, to wartość ta zostanie zaktualizowana, a równocześnie w polu DATA_NALICZENIA pojawi się aktualna data i zwiększone zostanie o jeden pole KTORE_NALICZENIE.
+*/
+
+CREATE OR REPLACE PROCEDURE PROC_ZLICZAJ IS
+	CURSOR kursor_miasto IS SELECT NAZWA_MIASTA FROM MIASTA;
+	temp_liczba_osob NUMBER;
+BEGIN
+ 	FOR temp_miasto IN kursor_miasto LOOP
+		SELECT COUNT(*) INTO temp_liczba_osob FROM OSOBY WHERE MIASTO = temp_miasto.NAZWA_MIASTA;
+
+	UPDATE MIASTA SET ILOSC_OSOB = temp_liczba_osob, DATA_NALICZENIA = SYSDATE, KTORE_NALICZENIE = KTORE_NALICZENIE + 1	
+	WHERE NAZWA_MIASTA = temp_miasto.NAZWA_MIASTA AND (ILOSC_OSOB IS NULL OR ILOSC_OSOB <> temp_liczba_osob);
+
+  	END LOOP;
+  
+	COMMIT;
+END;
+/
