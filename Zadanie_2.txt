@@ -1,0 +1,26 @@
+/*
+Utworzyc tryger OSOBY_PLEC_I_NAZWISKO zwiazany z tabela OSOBY, który podczas wstawiania lub modyfikacji sprawdzi, czy w polu PLEC
+pojawiła się jedna z liter: k,K,m,M. Jeśli nie, to zabroni wstawienia/modyfikacji rekordu zgłaszając błąd o treści: “NIEPOPRAWNE OKRESLONO PLEC”.
+Jeśli litery będą z dopuszczalnego zbioru, to tryger ten zadba o to, by ostatecznie w tabeli znalazły się wyłącznie duże litery M lub K.
+Dodatkowo tryger podczas operacji wstawiania i/lub modyfikacji spowoduje, że wartości w polu NAZWISKO będą wpisane począwszy od dużej litery (pozostałe litery małe).
+*/
+
+CREATE OR REPLACE TRIGGER OSOBY_PLEC_I_NAZWISKO
+BEFORE INSERT OR UPDATE ON OSOBY
+FOR EACH ROW
+DECLARE
+	temp_plec VARCHAR2(1);
+	temp_nazwisko VARCHAR2(30);
+BEGIN
+	IF :NEW.PLEC NOT IN ('k', 'K', 'm', 'M') THEN
+		RAISE_APPLICATION_ERROR(-20001, 'NIEPOPRAWNE OKRESLONO PLEC');
+	END IF;
+
+	temp_plec := UPPER(:NEW.PLEC);
+	:NEW.PLEC := temp_plec;
+
+
+	temp_nazwisko := INITCAP(:NEW.NAZWISKO);
+	:NEW.NAZWISKO := temp_nazwisko;
+END;
+/
